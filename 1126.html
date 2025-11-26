@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>土味情话挑战</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5c3d4, #a2c2e8);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 500px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header {
+            margin-bottom: 25px;
+        }
+        
+        .header h1 {
+            color: #e84393;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #636e72;
+            font-size: 14px;
+        }
+        
+        .love-message {
+            background: linear-gradient(45deg, #fd79a8, #e17055);
+            color: white;
+            padding: 25px 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+        }
+        
+        .love-message p {
+            font-size: 18px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .close-btn {
+            background-color: #ff7675;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            margin-top: 10px;
+        }
+        
+        .close-btn:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        .close-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .hint {
+            margin-top: 20px;
+            color: #636e72;
+            font-size: 14px;
+            font-style: italic;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart {
+            position: absolute;
+            color: rgba(255, 118, 117, 0.5);
+            font-size: 20px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .counter {
+            margin-top: 15px;
+            color: #636e72;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>土味情话无限挑战</h1>
+            <p>试着点击关闭按钮，看看会发生什么？</p>
+        </div>
+        
+        <div class="love-message">
+            <p id="message">你知道我的缺点是什么吗？是缺点你。</p>
+        </div>
+        
+        <button class="close-btn" id="closeBtn">关闭情话</button>
+        
+        <div class="hint" id="hint">提示：这个按钮似乎有点调皮...</div>
+        
+        <div class="counter">
+            已展示 <span id="counter">1</span> 条情话
+        </div>
+        
+        <div class="floating-hearts" id="heartsContainer"></div>
+    </div>
+
+    <script>
+        // 土味情话库
+        const loveMessages = [
+            "你知道我的缺点是什么吗？是缺点你。",
+            "我最近有点忙，忙什么？忙着喜欢你。",
+            "你知道你和星星有什么区别吗？星星在天上，你在我心里。",
+            "你猜我喜欢什么制服？被你制服。",
+            "我有点怕你，因为我怕老婆。",
+            "你知道我为什么感冒了吗？因为我对你完全没有抵抗力。",
+            "你属什么？虎？不，你属于我。",
+            "我觉得你特别像一款游戏，我的世界。",
+            "你知道我为什么最近吃素吗？因为你是我的菜。",
+            "你猜我想喝什么？呵护你。",
+            "我最近想换份工作，老板，缺人吗？缺你。",
+            "你知道我想成为什么人吗？你的人。",
+            "你猜我什么星座？为你量身定做。",
+            "我觉得你特别像一本书，越看越想睡。",
+            "你知道我为什么这么困吗？因为我为你所困。",
+            "你猜我最喜欢什么酒？和你的天长地久。",
+            "我觉得你特别像一款游戏，我的世界。",
+            "你知道我最近为什么总是打喷嚏吗？因为你在想我。",
+            "你猜我什么血型？你的理想型。",
+            "你知道我的眼睛为什么这么好看吗？因为我的眼里有你。"
+        ];
+        
+        const messageElement = document.getElementById('message');
+        const closeBtn = document.getElementById('closeBtn');
+        const hintElement = document.getElementById('hint');
+        const counterElement = document.getElementById('counter');
+        const heartsContainer = document.getElementById('heartsContainer');
+        
+        let currentIndex = 0;
+        let clickCount = 0;
+        let isMoving = false;
+        
+        // 创建漂浮的心形
+        function createHearts() {
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heartsContainer.appendChild(heart);
+            }
+        }
+        
+        // 更新情话内容
+        function updateMessage() {
+            messageElement.style.opacity = 0;
+            
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % loveMessages.length;
+                messageElement.textContent = loveMessages[currentIndex];
+                messageElement.style.opacity = 1;
+                clickCount++;
+                counterElement.textContent = clickCount;
+                
+                // 随机改变提示文本
+                const hints = [
+                    "提示：这个按钮似乎有点调皮...",
+                    "提示：再试试看，也许这次能点到？",
+                    "提示：它好像在和你玩捉迷藏",
+                    "提示：别放弃，继续尝试！",
+                    "提示：这可能是世界上最难点的按钮",
+                    "提示：它总是能在最后一刻溜走",
+                    "提示：你确定你真的能点到它吗？",
+                    "提示：这需要一点运气和技巧",
+                    "提示：它就像爱情，可遇不可求"
+                ];
+                hintElement.textContent = hints[Math.floor(Math.random() * hints.length)];
+            }, 300);
+        }
+        
+        // 移动按钮到随机位置
+        function moveButton() {
+            if (isMoving) return;
+            
+            isMoving = true;
+            
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            const btnRect = closeBtn.getBoundingClientRect();
+            
+            const maxX = containerRect.width - btnRect.width - 40;
+            const maxY = containerRect.height - btnRect.height - 40;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            closeBtn.style.position = 'absolute';
+            closeBtn.style.left = randomX + 'px';
+            closeBtn.style.top = randomY + 'px';
+            
+            setTimeout(() => {
+                isMoving = false;
+            }, 300);
+        }
+        
+        // 按钮点击事件
+        closeBtn.addEventListener('click', function() {
+            updateMessage();
+            moveButton();
+        });
+        
+        // 鼠标悬停时移动按钮
+        closeBtn.addEventListener('mouseover', function() {
+            if (!isMoving) {
+                moveButton();
+            }
+        });
+        
+        // 触摸设备上的触摸事件
+        closeBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            updateMessage();
+            moveButton();
+        });
+        
+        // 初始化页面
+        createHearts();
+    </script>
+</body>
+</html>
